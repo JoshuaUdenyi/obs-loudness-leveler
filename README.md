@@ -12,13 +12,23 @@ you what it is doing live, and protects the output with a lookahead limiter.
 Built on the official [obs-plugintemplate](https://github.com/obsproject/obs-plugintemplate),
 so GitHub Actions builds Windows, macOS and Linux packages for you.
 
-## Get builds for all platforms (no local setup)
+## Get the Windows installer (easiest)
 1. Create a new GitHub repository and push this folder to it.
-2. Open the **Actions** tab. The `Push` workflow builds Windows, macOS and
-   Ubuntu automatically on every push. Download the packages from the run's
-   artifacts.
-3. Optional: edit `author`, `website`, `email` and the macOS `bundleId` in
-   `buildspec.json`.
+2. Open the **Actions** tab and wait for the **Push** run to finish (about
+   10-15 minutes).
+3. Open the run and scroll to **Artifacts**. Download
+   **Loudness-Leveler-Setup-...**. Unzip it to get `Loudness-Leveler-Setup.exe`.
+4. Send that .exe to anyone. They close OBS, run it, and follow the
+   **Quick Guide** (`USER-GUIDE.md`, also installed as a Start menu shortcut).
+5. Optional: edit `author`, `website`, `email` in `buildspec.json`, and
+   `AppPublisher` in `installer/obs-loudness-leveler.iss`.
+
+The installer finds OBS automatically, asks to close OBS if it is running,
+and can be removed from *Windows Settings -> Apps*. Windows may show a blue
+"unknown publisher" screen, because the installer is not code-signed. Click
+**More info -> Run anyway**.
+
+The same run also builds the plain plugin packages for Windows, macOS and Linux.
 
 ## Build locally
 Follow the template's presets (needs CMake 3.28+):

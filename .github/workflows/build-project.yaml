@@ -290,6 +290,24 @@ jobs:
           config: ${{ needs.check-event.outputs.config }}
           package: ${{ fromJSON(needs.check-event.outputs.package) }}
 
+      - name: Build Installer 🎁
+        run: |
+          # Build Installer 🎁
+          $Iscc = "${Env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if ( -not ( Test-Path $Iscc ) ) {
+            choco install innosetup --yes --no-progress
+          }
+          if ( -not ( Test-Path $Iscc ) ) { throw 'Inno Setup was not found' }
+          $Stage = Join-Path $PWD "release/${{ needs.check-event.outputs.config }}"
+          & $Iscc "/DAppVersion=${{ steps.setup.outputs.pluginVersion }}" "/DStageDir=$Stage" installer/obs-loudness-leveler.iss
+          if ( $LASTEXITCODE -ne 0 ) { throw 'Inno Setup failed' }
+
+      - name: Upload Installer 📡
+        uses: actions/upload-artifact@v4
+        with:
+          name: Loudness-Leveler-Setup-${{ steps.setup.outputs.pluginVersion }}-${{ needs.check-event.outputs.commitHash }}
+          path: ${{ github.workspace }}/release/Loudness-Leveler-Setup.exe
+
       - name: Upload Artifacts 📡
         uses: actions/upload-artifact@v4
         with:

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loudness Leveler + Limiter - Quick Guide</title>
+<style>
+:root{--bg:#ffffff;--fg:#1c2330;--muted:#5b6575;--line:#d9dee7;--accent:#2f6fdb;--card:#f4f6fa}
+@media (prefers-color-scheme:dark){:root{--bg:#14171d;--fg:#e6e9ef;--muted:#9aa4b5;--line:#2c3340;--accent:#6aa3ff;--card:#1c2129}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.9rem;margin:0 0 4px} h2{margin-top:2.2em;padding-top:.6em;border-top:1px solid var(--line)}
+h1+p em{color:var(--muted)}
+a{color:var(--accent)}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--card)}
+blockquote{margin:1em 0;padding:.6em 1em;background:var(--card);border-left:4px solid var(--accent);border-radius:4px}
+blockquote p{margin:.3em 0}
+hr{display:none}
+code{background:var(--card);padding:1px 5px;border-radius:4px}
+</style></head><body><main>
+<h1>Loudness Leveler + Limiter: Quick Guide</h1>
+<p><em>For streamers and creators. No audio knowledge needed.</em></p>
+<h2>What it does</h2>
+<p>When you talk, your voice gets louder and quieter: you lean back, laugh,
+get excited, whisper. Viewers then keep reaching for the volume knob.</p>
+<p><strong>Loudness Leveler</strong> is an OBS filter that does that knob-turning for you:</p>
+<ul>
+<li>Too quiet? It turns you <strong>up</strong>.</li>
+<li>Too loud? It turns you <strong>down</strong>.</li>
+<li>A sudden shout or laugh? The built-in <strong>limiter</strong> catches it so it never
+  distorts or clips.</li>
+</ul>
+<p>You choose how loud you want to sound, and it keeps you there.</p>
+<hr />
+<h2>1. Install</h2>
+<ol>
+<li><strong>Close OBS.</strong></li>
+<li>Run <strong><code>Loudness-Leveler-Setup.exe</code></strong> and click through. It finds your OBS
+   automatically. If you installed OBS somewhere unusual, it lets you pick the
+   folder.</li>
+<li>Click <strong>Install</strong>, then <strong>Finish</strong>.</li>
+</ol>
+<p>To remove it later: <em>Windows Settings → Apps → Loudness Leveler for OBS →
+Uninstall</em>.</p>
+<hr />
+<h2>2. Set it up (3 minutes)</h2>
+<p><strong>Step 1: Add the filter to your mic</strong></p>
+<ol>
+<li>In OBS, find your mic in the <strong>Audio Mixer</strong>.</li>
+<li>Click the <strong>three dots</strong> (or the gear icon) next to it → <strong>Filters</strong>.</li>
+<li>Click <strong>+</strong> at the bottom left → <strong>Loudness Leveler + Limiter</strong>.</li>
+<li>Press OK.</li>
+</ol>
+<blockquote>
+<p><strong>Tip:</strong> if you use other filters (like Noise Suppression), keep Loudness
+Leveler <strong>at the bottom of the list</strong>, so it works on your already-cleaned
+voice.</p>
+</blockquote>
+<p><strong>Step 2: Open the meter panel</strong></p>
+<ol>
+<li>In the top menu, click <strong>View → Docks → Loudness Leveler</strong>.</li>
+<li>Drag the panel next to your Audio Mixer and leave it there.</li>
+</ol>
+<p><strong>Step 3: Talk for 10 seconds</strong></p>
+<p>Say a few sentences in your normal voice. Watch the panel:</p>
+<table>
+<thead>
+<tr>
+<th>You see</th>
+<th>It means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IN</strong> bar</td>
+<td>How loud you are <em>before</em> the filter</td>
+</tr>
+<tr>
+<td><strong>OUT</strong> bar</td>
+<td>How loud you are <em>after</em>. This is what your viewers hear</td>
+</tr>
+<tr>
+<td><strong>Line on the OUT bar</strong></td>
+<td>Your target. The goal is for OUT to sit on this line</td>
+</tr>
+<tr>
+<td>OUT bar is <strong>green</strong></td>
+<td>You are on target</td>
+</tr>
+<tr>
+<td>OUT bar is <strong>orange</strong> or <strong>red</strong></td>
+<td>You are off target (see Troubleshooting)</td>
+</tr>
+<tr>
+<td><strong>Gain +6.0 dB</strong></td>
+<td>The filter is turning you up by 6</td>
+</tr>
+<tr>
+<td><strong>Gain -4.0 dB</strong></td>
+<td>The filter is turning you down by 4</td>
+</tr>
+<tr>
+<td><strong>Limiter -2.0 dB</strong></td>
+<td>The limiter just caught a loud moment</td>
+</tr>
+</tbody>
+</table>
+<p>That's it. It works by itself from here.</p>
+<hr />
+<h2>3. Pick your loudness</h2>
+<p>Open the filter settings and set <strong>Target loudness</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>I am...</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Streaming (Twitch, YouTube, Kick)</td>
+<td><strong>-16</strong> <em>(the default)</em></td>
+</tr>
+<tr>
+<td>Making a podcast</td>
+<td><strong>-16</strong></td>
+</tr>
+<tr>
+<td>Streaming with loud game or music, and I want my voice softer</td>
+<td><strong>-20</strong></td>
+</tr>
+<tr>
+<td>Quiet, relaxed content (ASMR, calm talk)</td>
+<td><strong>-23</strong></td>
+</tr>
+</tbody>
+</table>
+<p><em>Numbers closer to 0 are louder. -16 is louder than -23.</em></p>
+<p>Leave <strong>Limiter ceiling</strong> at <strong>-1.0</strong>. It's the loudest your voice can ever
+get, and -1 is safe for every platform.</p>
+<hr />
+<h2>What each setting does (plain English)</h2>
+<p><strong>Meter</strong> <em>(you can't change these, they are just displays)</em></p>
+<ul>
+<li><strong>Input loudness:</strong> how loud you are going in.</li>
+<li><strong>Output loudness:</strong> how loud you are coming out.</li>
+<li><strong>Gain being applied:</strong> how much it is turning you up or down.</li>
+<li><strong>Limiter reduction:</strong> how hard the limiter is working. 0 means it's idle.</li>
+</ul>
+<p><strong>Auto-level</strong></p>
+<ul>
+<li><strong>Target loudness:</strong> how loud you want to be. See the table above.</li>
+<li><strong>Measurement window:</strong> how quickly it reacts. <em>Momentary</em> is fast.
+  <em>Short-term</em> is slower and smoother. If it sounds like it "pumps" or reacts
+  too quickly, choose Short-term.</li>
+<li><strong>Max boost:</strong> the most it is allowed to turn you <strong>up</strong>. Higher helps with a
+  quiet mic, but also raises background noise.</li>
+<li><strong>Max reduction:</strong> the most it is allowed to turn you <strong>down</strong>.</li>
+<li><strong>Gate:</strong> it ignores sounds quieter than this. It stops the filter from
+  turning up your room noise when you pause. If it does not react to your
+  quiet speech, lower this number (for example, from -50 to -60).</li>
+<li><strong>Tolerance:</strong> if you are already close to the target, it does nothing.
+  This stops it from making tiny changes all the time.</li>
+<li><strong>Reduce speed:</strong> how fast it turns you down when you get loud.</li>
+<li><strong>Raise speed:</strong> how fast it turns you back up. Slow (about 1500 ms) sounds
+  natural.</li>
+</ul>
+<p><strong>Limiter</strong></p>
+<ul>
+<li><strong>Ceiling:</strong> the loudest your voice can ever be. Use -1.</li>
+<li><strong>Lookahead:</strong> how far ahead it looks to catch loud moments. The default is
+  fine.</li>
+<li><strong>Limiter release:</strong> how fast it lets go after catching a loud moment. The
+  default is fine.</li>
+</ul>
+<p><strong>Bypass</strong></p>
+<p>Turns the whole filter off while keeping your settings. Use it to hear the
+difference (turn it on and off while you talk, with headphones). Keep it
+<strong>off</strong> for normal use. While it is on, the filter does nothing.</p>
+<p><strong>Defaults</strong> (button at the bottom of the window) puts everything back to the
+recommended settings.</p>
+<hr />
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>I can't find the filter in the list</strong></td>
+<td>You may have installed it while OBS was open. Close OBS completely, then open it again. If it's still missing, run the installer again and check the OBS folder it shows is the right one.</td>
+</tr>
+<tr>
+<td><strong>There is no "Loudness Leveler" in View → Docks</strong></td>
+<td>Same as above, restart OBS. The panel only appears after the plugin loads.</td>
+</tr>
+<tr>
+<td><strong>The panel says "No Loudness Leveler filter found"</strong></td>
+<td>Add the filter to your mic (Step 1).</td>
+</tr>
+<tr>
+<td><strong>The panel shows "BYPASSED"</strong></td>
+<td>Open the filter and untick <strong>Bypass</strong>.</td>
+</tr>
+<tr>
+<td><strong>My voice is still too quiet</strong></td>
+<td>Look at <strong>Gain</strong>. If it is stuck at the same number as <strong>Max boost</strong> (+12 by default), it has run out of room. Raise your mic volume in <em>Windows Sound settings</em> first, or raise <strong>Max boost</strong> to 18.</td>
+</tr>
+<tr>
+<td><strong>Background noise gets louder when I stop talking</strong></td>
+<td>Raise the <strong>Gate</strong> (for example, from -50 to -45) and lower <strong>Max boost</strong>. Also add the <strong>Noise Suppression</strong> filter <em>above</em> Loudness Leveler.</td>
+</tr>
+<tr>
+<td><strong>The volume seems to pump or breathe</strong></td>
+<td>Set <strong>Measurement window</strong> to <em>Short-term</em> and make <strong>Raise speed</strong> slower (for example, 3000 ms).</td>
+</tr>
+<tr>
+<td><strong>It does not react to quiet speech</strong></td>
+<td>Lower the <strong>Gate</strong> (for example, to -60).</td>
+</tr>
+<tr>
+<td><strong>It's too slow to react when I shout</strong></td>
+<td>Make <strong>Reduce speed</strong> faster (for example, 50 ms). The limiter still protects you in the meantime.</td>
+</tr>
+<tr>
+<td><strong>My voice sounds slightly late compared to my camera</strong></td>
+<td>The limiter adds about 5 ms, which you cannot notice. If your video is also delayed, use OBS <strong>Advanced Audio Properties → Sync Offset</strong>.</td>
+</tr>
+<tr>
+<td><strong>The meter in the filter window jumps while I move a slider</strong></td>
+<td>Untick <strong>Update this window live</strong>. The meter panel in your main window is the better one to watch.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>One last tip</h2>
+<p>The filter works best on a <strong>clean</strong> mic signal. Before using it:</p>
+<ol>
+<li>Set your mic volume in Windows so your normal speaking voice peaks around
+   <strong>-18 to -10 dB</strong> on the OBS mixer (the bar should reach the <strong>green and
+   yellow</strong> part, and never touch the red).</li>
+<li>Use a pop filter or place the mic about a fist-width from your mouth.</li>
+</ol>
+<p>Do that, and the Leveler only needs to make small, gentle corrections.</p>
+</main></body></html>
