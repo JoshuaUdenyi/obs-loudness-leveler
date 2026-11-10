@@ -56,13 +56,19 @@ suppression / EQ / compressor).
 5. A lookahead limiter (sliding minimum + smoothed gain, instant attack,
    exponential release) enforces the ceiling.
 
-## About the live meter
-OBS has no built-in meter control for filter windows, so the plugin asks OBS
-to redraw the window a few times per second while you speak (only when a
-reading changes by more than about 0.4). A side effect: if you are dragging a
-slider while the meter redraws, the drag can be interrupted. Untick
-**Update meter live** while tuning, and use **Refresh meter** to take a
-reading. The meter values are stored in the filter's settings, which is harmless.
+## The meter panel (always visible)
+After installing, open **View -> Docks -> Loudness Leveler** in OBS and drag
+the panel next to the Audio Mixer. It shows one block per mic that has the
+filter: an **IN** bar, an **OUT** bar with a line at your target loudness, the
+gain being applied, and limiter reduction. The OUT bar is green when you are
+within 2 LU of the target, orange within 5, red beyond. It updates 20 times
+per second and works without opening the filter window.
+
+OBS does not allow plugins to draw inside the mixer's own meter, so a docked
+panel is the closest option.
+
+The meter inside the filter window still exists (off by default, "Update this
+window live"). It redraws the whole window, which can interrupt slider drags.
 
 ## Test the audio code without OBS
 

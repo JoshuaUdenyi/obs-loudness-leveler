@@ -4,8 +4,8 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/common/bootstrap.cmake" NO_POLICY_SCO
 
 project(${_name} VERSION ${_version})
 
-option(ENABLE_FRONTEND_API "Use obs-frontend-api for UI functionality" OFF)
-option(ENABLE_QT "Use Qt functionality" OFF)
+option(ENABLE_FRONTEND_API "Use obs-frontend-api for UI functionality" ON)
+option(ENABLE_QT "Use Qt functionality" ON)
 
 include(compilerconfig)
 include(defaults)
@@ -36,7 +36,13 @@ endif()
 
 target_sources(
   ${CMAKE_PROJECT_NAME}
-  PRIVATE src/plugin-main.c src/leveler-filter.c src/leveler.c src/loudness.c
+  PRIVATE
+    src/plugin-main.c
+    src/leveler-filter.c
+    src/leveler.c
+    src/loudness.c
+    src/text.c
+    src/meter-dock.cpp
 )
 
 # The audio code uses libm (log10, exp, ...) on Linux.

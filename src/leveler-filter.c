@@ -6,8 +6,10 @@
 #include <math.h>
 #include <plugin-support.h>
 #include "leveler.h"
+#include "meter-api.h"
+#include "text.h"
 
-#define T(s) obs_module_text(s)
+#define T(s) ll_text(s)
 
 /* How often the meter checks whether the window needs refreshing. */
 #define METER_POLL_MS 250
@@ -29,12 +31,89 @@ struct leveler_filter {
 	volatile bool live;    /* "Live meter" checkbox */
 	volatile bool ui_seen; /* the settings window has been opened at least once */
 	double shown[4];       /* values currently displayed: in, out, gain, limiter */
+
+	/* copies of settings the dock panel needs */
+	volatile double target;
+	volatile bool agc;
 };
 
 static const char *lf_get_name(void *unused)
 {
 	UNUSED_PARAMETER(unused);
 	return T("Filter.Name");
+}
+
+/* ---------- registry of live filters (read by the dock panel) ---------- */
+
+#define LL_MAX_REGISTRY 32
+
+static pthread_mutex_t g_reg_mutex;
+static bool g_reg_ready;
+static struct leveler_filter *g_reg[LL_MAX_REGISTRY];
+
+void ll_registry_init(void)
+{
+	pthread_mutex_init(&g_reg_mutex, NULL);
+	g_reg_ready = true;
+}
+
+void ll_registry_free(void)
+{
+	g_reg_ready = false;
+	pthread_mutex_destroy(&g_reg_mutex);
+}
+
+static void registry_add(struct leveler_filter *f)
+{
+	if (!g_reg_ready)
+		return;
+	pthread_mutex_lock(&g_reg_mutex);
+	for (int i = 0; i < LL_MAX_REGISTRY; i++) {
+		if (!g_reg[i]) {
+			g_reg[i] = f;
+			break;
+		}
+	}
+	pthread_mutex_unlock(&g_reg_mutex);
+}
+
+static void registry_remove(struct leveler_filter *f)
+{
+	if (!g_reg_ready)
+		return;
+	pthread_mutex_lock(&g_reg_mutex);
+	for (int i = 0; i < LL_MAX_REGISTRY; i++)
+		if (g_reg[i] == f)
+			g_reg[i] = NULL;
+	pthread_mutex_unlock(&g_reg_mutex);
+}
+
+int ll_meter_snapshot(struct ll_meter_row *rows, int max)
+{
+	int n = 0;
+	if (!g_reg_ready)
+		return 0;
+
+	pthread_mutex_lock(&g_reg_mutex);
+	for (int i = 0; i < LL_MAX_REGISTRY && n < max; i++) {
+		struct leveler_filter *f = g_reg[i];
+		if (!f || !f->lv)
+			continue;
+		struct ll_meter_row *r = &rows[n];
+		obs_source_t *parent = obs_filter_get_parent(f->ctx);
+		const char *name = parent ? obs_source_get_name(parent) : NULL;
+		snprintf(r->source, sizeof(r->source), "%s", name ? name : "(not attached)");
+		r->in_lufs = leveler_input_lufs(f->lv);
+		r->out_lufs = leveler_output_lufs(f->lv);
+		r->gain_db = leveler_gain_db(f->lv);
+		r->limiter_db = leveler_limiter_gr_db(f->lv);
+		r->target_lufs = f->target;
+		r->bypass = f->bypass;
+		r->agc = f->agc;
+		n++;
+	}
+	pthread_mutex_unlock(&g_reg_mutex);
+	return n;
 }
 
 /* ---------- live meter ---------- */
@@ -106,6 +185,8 @@ static void lf_update(void *data, obs_data_t *settings)
 	pthread_mutex_lock(&f->mutex);
 	f->bypass = obs_data_get_bool(settings, "bypass");
 	f->live = obs_data_get_bool(settings, "live_meter");
+	f->target = p.target_lufs;
+	f->agc = p.agc_enabled;
 	if (f->lv)
 		leveler_set_params(f->lv, &p);
 	pthread_mutex_unlock(&f->mutex);
@@ -129,12 +210,15 @@ static void *lf_create(obs_data_t *settings, obs_source_t *source)
 	if (os_event_init(&f->stop_evt, OS_EVENT_TYPE_MANUAL) == 0 &&
 	    pthread_create(&f->thread, NULL, meter_thread, f) == 0)
 		f->thread_started = true;
+
+	registry_add(f);
 	return f;
 }
 
 static void lf_destroy(void *data)
 {
 	struct leveler_filter *f = data;
+	registry_remove(f); /* before anything is freed: the dock may be reading */
 	if (f->thread_started) {
 		os_event_signal(f->stop_evt);
 		pthread_join(f->thread, NULL);
@@ -150,7 +234,8 @@ static void lf_defaults(obs_data_t *s)
 	leveler_params_t d;
 	leveler_default_params(&d);
 	obs_data_set_default_bool(s, "bypass", false);
-	obs_data_set_default_bool(s, "live_meter", true);
+	/* off by default: the dock panel is the main meter now */
+	obs_data_set_default_bool(s, "live_meter", false);
 	obs_data_set_default_bool(s, "agc", d.agc_enabled);
 	obs_data_set_default_double(s, "target", d.target_lufs);
 	obs_data_set_default_int(s, "window", d.window);
