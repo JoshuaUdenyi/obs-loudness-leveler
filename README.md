@@ -23,7 +23,8 @@ so GitHub Actions builds Windows, macOS and Linux packages for you.
 5. Optional: edit `author`, `website`, `email` in `buildspec.json`, and
    `AppPublisher` in `installer/obs-loudness-leveler.iss`.
 
-The installer finds OBS automatically, asks to close OBS if it is running,
+The installer puts the plugin in `C:\ProgramData\obs-studio\plugins\obs-loudness-leveler`
+(the folder OBS reads plugins from), asks to close OBS if it is running,
 and can be removed from *Windows Settings -> Apps*. Windows may show a blue
 "unknown publisher" screen, because the installer is not code-signed. Click
 **More info -> Run anyway**.

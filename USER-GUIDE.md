@@ -21,9 +21,8 @@ You choose how loud you want to sound, and it keeps you there.
 ## 1. Install
 
 1. **Close OBS.**
-2. Run **`Loudness-Leveler-Setup.exe`** and click through. It finds your OBS
-   automatically. If you installed OBS somewhere unusual, it lets you pick the
-   folder.
+2. Run **`Loudness-Leveler-Setup.exe`** and click through. If Windows shows a
+   blue "unknown publisher" screen, click **More info**, then **Run anyway**.
 3. Click **Install**, then **Finish**.
 
 To remove it later: *Windows Settings → Apps → Loudness Leveler for OBS →
@@ -136,7 +135,7 @@ recommended settings.
 
 | Problem | What to do |
 |---|---|
-| **I can't find the filter in the list** | You may have installed it while OBS was open. Close OBS completely, then open it again. If it's still missing, run the installer again and check the OBS folder it shows is the right one. |
+| **I can't find the filter in the list** | You may have installed it while OBS was open. Close OBS completely, then open it again. If it's still missing, run the installer again. If you earlier copied the plugin into the OBS folder by hand, delete that old copy (the file `obs-loudness-leveler.dll` in `obs-studio\obs-plugins\64bit`), so OBS does not see two. |
 | **There is no "Loudness Leveler" in View → Docks** | Same as above, restart OBS. The panel only appears after the plugin loads. |
 | **The panel says "No Loudness Leveler filter found"** | Add the filter to your mic (Step 1). |
 | **The panel shows "BYPASSED"** | Open the filter and untick **Bypass**. |

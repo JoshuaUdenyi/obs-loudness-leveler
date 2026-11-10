@@ -299,6 +299,7 @@ jobs:
           }
           if ( -not ( Test-Path $Iscc ) ) { throw 'Inno Setup was not found' }
           $Stage = Join-Path $PWD "release/${{ needs.check-event.outputs.config }}"
+          Get-ChildItem -Recurse -File $Stage | ForEach-Object { $_.FullName.Substring($Stage.Length) }
           & $Iscc "/DAppVersion=${{ steps.setup.outputs.pluginVersion }}" "/DStageDir=$Stage" installer/obs-loudness-leveler.iss
           if ( $LASTEXITCODE -ne 0 ) { throw 'Inno Setup failed' }
 
